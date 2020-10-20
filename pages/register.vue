@@ -7,6 +7,12 @@
         @submit.prevent="submit"
         lazy-validation
         >
+        <v-text-field
+        v-model="form.name"
+        label="Votre nom complet"
+        required
+        ></v-text-field>
+
 
         <v-text-field
         v-model="form.email"
@@ -17,7 +23,14 @@
 
         <v-text-field
         v-model="form.password"
-        label="Votre mot de passe"
+        label="Choisissez un mot de passe"
+        type="password"
+        required
+        ></v-text-field>
+
+        <v-text-field
+        v-model="form.password_confirmation"
+        label="Confirmez votre mot de passe"
         type="password"
         required
         ></v-text-field>
@@ -28,7 +41,7 @@
         color="blue lighten-1"
         class="mt-4"
         >
-        Connexion
+        Inscription
       </v-btn>
 
     </v-form>
@@ -40,17 +53,19 @@
 
 <script>
 export default {
-  head () {
+  head() {
     return {
-      title : 'Connexion à votre compte'
+      title : 'Inscription'
     }
   },
   data() {
     return {
       validation : {},
       form : {
+        name : '',
         email : '',
-        password : ''
+        password : '',
+        password_confirmation : ''
       }
     }
   },
