@@ -44,7 +44,7 @@ export default {
     baseUrl : env.parsed.API_URL
   },
 
-  // Auth module
+  // Auth module 
   auth : {
     strategies : {
       local : {

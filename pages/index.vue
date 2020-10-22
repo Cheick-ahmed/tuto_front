@@ -45,7 +45,7 @@
 export default {
   head () {
     return {
-      title : 'Connexion à votre compte'
+      title : 'Connexion à votre compte.'
     }
   },
   data() {
