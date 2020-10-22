@@ -12,21 +12,24 @@
         v-model="form.email"
         label="Votre email"
         type="email"
+        :error-messages="validation.email"
         required
         ></v-text-field>
 
         <v-text-field
+        class="mt-4"
         v-model="form.password"
         label="Votre mot de passe"
         type="password"
+        :error-messages="validation.password"
         required
         ></v-text-field>
 
         <v-btn
         :disabled="validation.errors"
         type="submit"
-        color="blue lighten-1"
-        class="mt-4"
+        :color="validation.email || validation.password ? 'error' : 'primary'"
+        class="mt-6"
         >
         Connexion
       </v-btn>
@@ -49,18 +52,24 @@ export default {
     return {
       validation : {},
       form : {
-        email : '',
-        password : ''
+        email : 'chs.ahmed_pro02@outlook.com',
+        password : 'ilovecats'
       }
     }
   },
 
   methods: {
-    validate () {
-      this.$refs.form.validate()
-    },
-    submit() {
-      console.log(this.form)
+    async submit() {
+      try {
+        await this.$auth.loginWith('local', {
+          data : this.form
+        })
+        this.$router.push({
+          name : 'dashboard'
+        })
+      } catch (e) {
+        this.validation = e.response.data.errors
+      }
     }
   },
 }

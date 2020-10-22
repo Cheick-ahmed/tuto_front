@@ -1,17 +1,17 @@
 import colors from 'vuetify/es5/util/colors'
-
+let env = require('dotenv').config()
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     titleTemplate: '%s - tuto_front',
     title: 'tuto_front',
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
 
@@ -30,16 +30,47 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
-  ],
+    ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-  ],
+    '@nuxtjs/auth'
+    ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseUrl : env.parsed.API_URL
+  },
+
+  // Auth module
+  auth : {
+    strategies : {
+      local : {
+        endpoints : {
+          login : {
+            url : 'auth/login', 
+            method : 'post',
+            propertyName : 'data.token'
+          },
+          user : {
+            url : 'auth/me', 
+            method : 'get',
+            propertyName : 'data'
+          },
+          logout : {
+            url : 'auth/logout', 
+            method : 'post',
+          },
+        }
+
+      }
+    },
+    redirect : {
+      login : '/auth/login'
+    }
+  },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
