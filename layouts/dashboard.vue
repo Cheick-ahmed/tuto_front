@@ -3,10 +3,10 @@
 		<v-app-bar app>
 			<v-spacer></v-spacer>
 			<v-btn text class="mr-4">
-				Account
+				<nuxt-link :to="{name:'dashboard'}">Account</nuxt-link>
 			</v-btn>
 			<v-btn text>
-				Buildings
+				<nuxt-link :to="{name:'dashboard-buildings'}">Buildings</nuxt-link>
 			</v-btn>
 
 			<v-btn text class="ml-6" @click.prevent="logout">
