@@ -1,60 +1,50 @@
 <template>
 	<div>
-		<h1>Mon compte</h1>
-		<v-row class="mt-8">
-			<v-col sm="8" lg="6">
-				<v-card>
-					<v-card-title>
-						Mes informations personnelles
-					</v-card-title>
-					<v-card-text class="mt-4">
-						<v-form
-						ref="form"
-						@submit.prevent="submit"
-						lazy-validation
-						>
-						<v-text-field
-						v-model="form.name"
-						label="Votre nom complet"
-						required
-						></v-text-field>
+		<v-snackbar v-model="notification.snackbar">
+			{{ notification.text }}
+		</v-snackbar>
 
+		<div>
+			<v-row>
+				<v-col sm="8" lg="6">
+					<h1>Informations personnelles</h1>
+					<v-card>
+						<v-card-text class="mt-4">
+							<v-form @submit.prevent="updateProfile" lazy-validation>
+								<v-text-field v-model="form.name" label="Votre nom complet" :error-messages="validation.name" required></v-text-field>
 
-						<v-text-field
-						v-model="form.email"
-						label="Votre email"
-						type="email"
-						required
-						></v-text-field>
+								<v-text-field class="mt-3" v-model="form.email" label="Votre email" type="email" :error-messages="validation.email" required></v-text-field>
 
-						<v-text-field
-						v-model="form.password"
-						label="Choisissez un mot de passe"
-						type="password"
-						required
-						></v-text-field>
+								<v-btn :disabled="validation.errors" type="submit" color="primary" class="mt-4">
+									Enregistrer
+								</v-btn>
+							</v-form>
+						</v-card-text>
+					</v-card>
+				</v-col>
 
-						<v-text-field
-						v-model="form.password_confirmation"
-						label="Confirmez votre mot de passe"
-						type="password"
-						required
-						></v-text-field>
+				<v-col sm="8" lg="6">
+					<h1>Mot de passe</h1>
+					<v-card>
+						<v-card-text class="mt-4">
+							<v-form @submit.prevent="updatePassword" lazy-validation>
 
-						<v-btn
-						:disabled="validation.errors"
-						type="submit"
-						color="primary"
-						class="mt-4"
-						>
-						Enregistrer
-					</v-btn>
-				</v-form>
-			</v-card-text>
-		</v-card>
-	</v-col>
-</v-row>
-</div>
+								<v-text-field v-model="form.current_password" label="Mot de passe actuel" type="password" :error-messages="validation.current_password" required></v-text-field>
+
+								<v-text-field class="mt-3" v-model="form.password" label="Nouveau mot de passe" type="password" :error-messages="validation.password" required></v-text-field>
+
+								<v-text-field class="mt-3" v-model="form.password_confirmation" label="Confirmez le nouveau mot de passe" type="password" required></v-text-field>
+
+								<v-btn :disabled="validation.errors" type="submit" color="primary" class="mt-4">
+									Modifier
+								</v-btn>
+							</v-form>
+						</v-card-text>
+					</v-card>
+				</v-col>
+			</v-row>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -68,17 +58,58 @@ export default {
 	data () {
 		return {
 			validation : {},
+			notification : {
+				snackbar : false,
+				text : ''
+			},
 			form : {
-				name : 'Cheick Ahmed Sidibé',
-				email : 'chs.ahmed_pro02@outlook.com',
-				password : 'ahmedahmed',
-				password_confirmation : 'ahmed_ahmed'
+				name : this.$auth.user[0].name,
+				email : this.$auth.user[0].email,
+				current_password : '',
+				password : '',
+				password_confirmation : ''
 			}
 		}
 	},
 	methods : {
-		submit () {
-			console.log('Profile updated.')
+		async updateProfile () {
+			try {
+				await this.$axios.patch('account/profile', {
+					name : this.form.name,
+					email : this.form.email
+				})
+				await this.$auth.fetchUser()
+
+				setTimeout(() => {
+					this.notification.for = 'profile'
+					this.notification.snackbar = true,
+					this.notification.text = 'Vos informations ont bien été mise à jour.'
+				},500)
+
+			} catch (e) {
+				console.log(e.response.data.errors)
+				this.validation = e.response.data.errors
+			}
+		},
+
+		async updatePassword () {
+			try {
+				await this.$axios.patch('account/password', {
+					current_password : this.form.current_password,
+					password : this.form.password,
+					password_confirmation : this.form.password_confirmation
+				})
+				await this.$auth.fetchUser()
+				setTimeout(() => {
+					this.notification.for = 'profile'
+					this.notification.snackbar = true,
+					this.notification.text = 'Votre mot de passe a bien été mis à jour.'
+				},500)
+			} catch (e) {
+				console.log(e)
+				this.validation = e.response.data.errors
+			}
+			
 		}
 	}
 }

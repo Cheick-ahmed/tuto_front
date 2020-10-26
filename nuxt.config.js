@@ -68,7 +68,7 @@ export default {
       }
     },
     redirect : {
-      login : '/auth/login'
+      login : '/'
     }
   },
 
